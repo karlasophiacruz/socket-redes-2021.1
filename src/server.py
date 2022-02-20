@@ -33,7 +33,7 @@ def game_t(conn, addr):
     
     #player_name = player_name.rstrip()
     players_name.append(player_name.decode('utf-8'))
-    print(players_name[-1])
+    print('Player ' + players_name[-1] + ' is online! Number of players: ' + str(len(players)))
 
     # define os turnos de cada jogador
     # if turno == 'O':
@@ -45,11 +45,11 @@ def game_t(conn, addr):
 
     # envia mensagem de 'bem-vindo'
     if len(players) < 2:
-        msg = "welcome1"
+        msg = "hello1"
         conn.send(msg.encode('utf-8'))
         #print(players[0], conn)
     else:
-        msg = "welcome2"
+        msg = "hello2"
         conn.send(msg.encode('utf-8'))
         #print(players[1], conn)
         time.sleep(1)
@@ -60,28 +60,32 @@ def game_t(conn, addr):
 
         msg = "iamplayer2$" + players_name[0]
         players[1].send(msg.encode('utf-8'))
-        
-    # while True:
-        
-    #     # recebe a jogada do jogador
-    #     data = conn.recv(4096)
-    #     if not data:
-    #         break
-        
-    #     # envia a jogada do outro jogador para o adversário
-    #     if data.startswith("$xy$"):
-    #         if conn == players[0]:
-    #             players[1].send(data)
-    #         else:
-    #             players[0].send(data) 
-    
-    # remove o jogador após o fim da partida ou perda de conexão
-    #if conn == players[0]:
-    #    del players[0]
-    #else:
-    #    del players[1]
 
-    #conn.close()         
+        time.sleep(3)
+    
+        msgg = "begin"
+        players[0].send(msgg.encode('utf-8'))
+        players[1].send(msgg.encode('utf-8'))
+        
+    while True:
+        # recebe a jogada do jogador
+        data = conn.recv(4096)
+        if not data:
+            break
+        
+        data = data.decode('utf-8')
+        # envia a jogada do outro jogador para o adversário
+        if data.startswith("$coord:"):
+            if conn == players[0]:
+                players[1].send(data.encode('utf-8'))
+            else:
+                players[0].send(data.encode('utf-8')) 
+    
+    #remove o jogador após o fim da partida ou perda de conexão
+    if conn == players[0]:
+       del players[0]
+    else:
+       del players[1]       
                  
                       
 def start_server():
@@ -95,7 +99,6 @@ def start_server():
         while True:
             conn, addr = s.accept()
             if len(players) < 2:
-                print('Jogador se conectou!', len(players))
                 players.append(conn)
                 threading._start_new_thread(game_t, (conn, addr))
                 #player.start()
@@ -108,7 +111,8 @@ def start_server():
                 # conn.sendall(data)
             else:
                 # conn.sendall('Já temos muitos jogadores, querido!'.encode('utf-8'))
-                print('Jogador vai embora!', len(players))
+                msg = "full"
+                conn.sendall(msg.encode('utf-8'))
                 
                 #conn.close() 
                 

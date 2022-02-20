@@ -16,29 +16,33 @@ class TicTacToe:
 
 
   def printBoard(self):
+    print("\n########################")
+    print("------ Your board ------\n")
     for i in range(3):
-      print("|".join(self.board[i]))
+      print(" | ".join(self.board[i]))
 
       if(i < 2):
-        print("------")
+        print("---------")
 
+    print("\n########################\n")
 
   def getInputValido(mensagem):
-    try:
-      n = int(input(mensagem))
+    while True:
+      try:
+        n = int(input(mensagem))
 
-      if(n >= 1 and n <= 3):
-        return n - 1
+        if(n >= 1 and n <= 3):
+          break
+        
+        else:
+          print("SophLia: Enter a number between 1 and 3.")
       
-      else:
-        print("Numero precisa estar entre 1 e 3")
-
-        return getInputValido(mensagem)
+      except:
+        print("SophLia: This is not a valid number.")
+        pass
     
-    except:
-      print("Numero nao valido")
+    return n - 1
 
-      return getInputValido(mensagem)
 
 
   def verificaMovimento(self, i, j):
@@ -73,7 +77,7 @@ class TicTacToe:
         if(self.board[i][j] == branco):
           return False
 
-    return "EMPATE"
+    return "DRAW"
 
   def __str__(self):
     str = ''
