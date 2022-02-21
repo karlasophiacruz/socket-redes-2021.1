@@ -109,7 +109,7 @@ def running_game_t(c, name):
             break
 
         # Mensagem de bem-vindo
-        elif if data_server.startswith("hello"):
+        elif data_server.startswith("hello"):
             # Primeiro jogador a entrar no servidor
             if data_server == "hello1":
                 player1["name"] = name

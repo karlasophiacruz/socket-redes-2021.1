@@ -218,7 +218,7 @@ def start_server():
             if game_mode == 1:
                 if len(players) < 2:
                     players.append(conn)
-                    print("Number of players PvP: " + str(len(players)))
+                    print("Me: Number of players PvP: " + str(len(players)))
 
                     # Inicia a thread do jogo PvP
                     threading._start_new_thread(
