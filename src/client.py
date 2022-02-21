@@ -105,7 +105,7 @@ def running_game_t(c, name):
             elif data_server == "hello3":
                 player1["name"] = name
                 print("Sophlia: Welcome " +
-                      player2["name"] + "! Glad you're here!")
+                      player1["name"] + "! Glad you're here!")
 
         elif data_server.startswith("iamplayer"):
             if data_server.startswith("iamplayer1$"):
@@ -113,7 +113,7 @@ def running_game_t(c, name):
                 player2["name"] = data_server[11: len(data_server)]
                 print("SophLia: Your opponent is " +
                       player2["name"] + ". Good Luck!")
-                time.sleep(2)
+                time.sleep(1)
                 do_playing(-100, -100)
 
             elif data_server.startswith("iamplayer2$"):
@@ -121,31 +121,28 @@ def running_game_t(c, name):
                 player1["name"] = data_server[11: len(data_server)]
                 print("SophLia: Your opponent is " +
                       player1["name"] + ". Good Luck!")
-                time.sleep(2)
+                time.sleep(1)
                 print("SophLia: It's your opponent's turn.")
-                #do_playing(-100, -100)
 
         elif data_server.startswith("begin"):
-            # print("entrou")
             while not is_over:
-                # print("entrou2")
-                data_server = c.recv(4096)
+                while True:
+                    data_server = c.recv(1024)
+                    if len(data_server) > 0:
+                        break
 
-                if not data_server:
-                    break
                 data_server = data_server.decode('utf-8')
-
                 if data_server.startswith("$coord:"):
                     current_turn = me
-                    #temp = data_server.replace("$coord:", "")
+                    
                     x = int(data_server[7])
                     y = int(data_server[8])
-                    #print("x", x, "y", y)
 
                     result = do_playing(x, y)
                     if result == True:
                         is_over = True
                         break
+                    
                     current_turn = ((me + 1) % 2)
 
         time.sleep(2)
@@ -163,42 +160,26 @@ def connect_server():
     try:
         c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         c.connect((HOST, PORT))
-        #data = []
+
+        while True:
+            time.sleep(1)
+            ia_mode = c.recv(4096)
+            if len(ia_mode) > 1:
+                break
+
+        ia_mode = ia_mode.decode('utf-8')
+        if ia_mode == "ia_mode":
+            print("Hello! What game mode do you wanna play?")
+            answer = str(ttt.getInputValido("Press '1' for 'Player vs Player' and '2' for 'Player vs IA': ") + 1)
+            c.send(answer.encode('utf-8'))
+
+        #time.sleep(2)
         c.send(name.encode('utf-8'))
 
         threading.Thread(target=running_game_t, args=(c, name)).start()
 
     except Exception as e:
         print("ERROR")
-
-        # Mantem uma conexão com o servidor
-        # while True:
-        # Recebe as mensagens do servidor que informam o Jogador, Turno, Tabuleiro e se is_over
-        # while True:
-        # time.sleep(2)
-        # byte = s.recv(1)
-        # print(byte.decode('utf-8'))
-
-        # if byte.decode('utf-8') == "1":
-        #     break
-
-        # while True:
-        #     # byte = s.recv(1024)
-        #     if not byte:
-        #         print("entrou")
-        #         stre = ' '.join(map(str, data))
-        #         strr = stre.split('$')
-        #         player = strr[0]
-        #         turno = strr[1]
-        #         board = strr[2]
-        #         is_over = strr[3]
-        #         print(player)
-        #         print(turno)
-        #         print(board)
-        #         print(is_over)
-        #         break
-
-        #     data.append(byte.decode('utf-8'))
 
 
 connect_server()

@@ -1,27 +1,39 @@
 import socket
 import threading
-from tictactoe import TicTacToe
+from tictactoe import TicTacToe as ttt
+import ia
 import time
 
 HOST = '127.0.0.1'
 PORT = 65432
-#s = None
+s = None
 
-
-# Cria um tabuleiro de jogo vazio
-board = TicTacToe()
 players = []
 players_name = []
 turno = 'X'
-acabou = 0
-
-# start_server()
+is_over = False
+players_ia = 0
 
 # Função para executar o jogo e enviar as rodadas para o outro jogador
 
+def check_end_ia_game(board, player_name):
+    global is_over
+    is_over = ttt.verificaGanhador(board)
+    if is_over == "X":
+        print("Me: I lost! Player " + player_name + " won!")
+        print("\n###########################################\n")
+    elif is_over == "O":
+        print("Me: I won! Player " + player_name + " lost!")
+        print("\n###########################################\n")
+    elif is_over == "DRAW":
+        print("Me: It's a DRAW!")
+        print("\n################\n")
+    else:
+        return False
+    return True
 
 def game_pvp_t(conn, addr):
-    global turno, acabou, players, players_name
+    global turno, players, players_name
 
     while True:
         # recebe o nome do jogador
@@ -31,8 +43,8 @@ def game_pvp_t(conn, addr):
             break
 
     players_name.append(player_name.decode('utf-8'))
-    print('Player ' + players_name[-1] +
-          ' is online! Number of players: ' + str(len(players)))
+    print('Me: Player ' + players_name[-1] +
+          ' is online! Number of players PvP: ' + str(len(players)))
 
     # envia mensagem de 'bem-vindo'
     if len(players) < 2:
@@ -78,34 +90,97 @@ def game_pvp_t(conn, addr):
 
 
 def game_ia_t(conn, addr):
+    global players_ia, is_over
+
+    # Cria um tabuleiro de jogo vazio
+    board = ttt()
+
     while True:
         # recebe o nome do jogador
         time.sleep(1)
         player_name = conn.recv(1024)
-        if len(player_name) > 1:
+        if len(player_name) > 0:
             break
 
-        print('Player ' + players_name[-1] +
-              ' is online! IA mode')
+    player_name = player_name.decode('utf-8')
+    print('Me: Player ' + player_name +
+            ' is online! IA mode')
 
-        msg = "hello3"
-        conn.send(msg.encode('utf-8'))
+    msg = "hello3"
+    conn.send(msg.encode('utf-8'))
+
+    # envia os dados dos jogadores
+    msg = "iamplayer1$me ;)"
+    conn.send(msg.encode('utf-8'))
+    init = 0
+    while not is_over:
+        # recebe a jogada do jogador
+        while True:
+            data = conn.recv(4096)
+            if data:
+                break
+        
+        data = data.decode('utf-8')
+        # envia a jogada do outro jogador para o adversário
+        if data.startswith("$coord:"):
+            x = int(data[7])
+            y = int(data[8])
+            ttt.fazMovimento(board, x, y, 0)
+
+            print("Me: Player " + player_name + " played:")
+            ttt.printBoard(board)
+
+            is_over = check_end_ia_game(board, player_name)
+
+            if init == 0:
+                msgg = "begin"
+                conn.send(msgg.encode('utf-8'))
+                init = 1
+                time.sleep(3)
+            
+            if not is_over:
+                while True:
+                    x, y = ia.movimentoIA(board.board, 1)
+
+                    if ttt.verificaMovimento(board, x, y):
+                        print("Me: Opponent " + player_name + ". My turn:") 
+                        ttt.fazMovimento(board, x, y, 1)
+                        ttt.printBoard(board)
+                        jogadaaa = "$coord:" + str(x) + str(y)
+
+                        x = conn.send(jogadaaa.encode('utf-8'))
+                        break
+                    
+                    else:
+                        print("Me: Invalid move.")
+
+                is_over = check_end_ia_game(board, player_name)
+    
+    players_ia -= 1
 
 
 def start_server():
-    global HOST, PORT
+    global HOST, PORT, players, players_ia
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))
         s.listen()
+        print("Me: I'm awake. Waiting foy players...")
 
         # Aceita novos jogadores se o número de jogadores ativos for menor que 2
         while True:
             conn, addr = s.accept()
-            msg = "Hello! What game mode do you wanna play? Press '1' for 'Player vs Player' and '2' for 'Player vs IA'"
-            conn.sendall(msg.encode('utf-8'))
+            msg = "ia_mode"
 
+            conn.send(msg.encode('utf-8'))
+            time.sleep(1)
             game_mode = conn.recv(1024)
+
+            if not game_mode:
+                break
+            
+            game_mode = int(game_mode.decode('utf-8'))
+            #print("game_mode", game_mode)
 
             if game_mode == 1:
                 if len(players) < 2:
@@ -117,46 +192,8 @@ def start_server():
                     conn.sendall(msg.encode('utf-8'))
 
             else:
-                if len(players) < 1:
-                    players.append(conn)
-                    threading._start_new_thread(game_ia_t, (conn, addr))
-                else:
-                    msg = "full"
-                    conn.sendall(msg.encode('utf-8'))
-
-                # board.printBoard()
-
-                # jogador = 0
-                # self.board = criarBoard()
-                # ganhador = verificaGanhador(self.board)
-
-                # while(not ganhador):
-                #     printBoard(self.board)
-                #     print("=========================")
-
-                #     if(jogador == 0):
-                #     i, j = movimentoIA(self.board, jogador)
-                #     #i = getInputValido("Digite a linha: ")
-                #     #j = getInputValido("Digite a coluna: ")
-
-                #     else:
-                #     i, j = movimentoIA(self.board, jogador)
-                #     #i = getInputValido("Digite a linha: ")
-                #     #j = getInputValido("Digite a coluna: ")
-
-                #     if(verificaMovimento(self.board, i, j)):
-                #     fazMovimento(self.board, i, j, jogador)
-                #     jogador = (jogador + 1) % 2
-
-                #     else:
-                #     print("A posicao informada ja esta ocupada")
-
-                #     ganhador = verificaGanhador(self.board)
-
-                # print("=========================")
-                # printBoard(self.board)
-                # print("Ganhador = ", ganhador)
-                # print("=========================")
-
+                players_ia += 1
+                print("Me: Number of all players: " + str(len(players) + players_ia))
+                threading._start_new_thread(game_ia_t, (conn, addr))
 
 start_server()
