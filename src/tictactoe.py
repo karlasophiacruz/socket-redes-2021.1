@@ -6,6 +6,10 @@ IA - Jogo da Velha.ipynb
 # Jogo para dois jogadores - Jogo da Velha
 
 """
+import os
+
+def clear():
+  os.system('cls' if os.name == 'nt' else 'clear') or None
 
 branco = " "
 token = ["X", "O"]
@@ -26,6 +30,7 @@ class TicTacToe:
 
     print("\n########################\n")
 
+
   def getInputValido(mensagem):
     while True:
       try:
@@ -42,7 +47,6 @@ class TicTacToe:
         pass
     
     return n - 1
-
 
 
   def verificaMovimento(self, i, j):
@@ -78,49 +82,3 @@ class TicTacToe:
           return False
 
     return "DRAW"
-
-  def __str__(self):
-    str = ''
-    for i in range(3):
-      str += ("|".join(self.board[i]))
-
-      if(i < 2):
-        str += ("\n------")
-    
-    return str
-
-
-  """ 
-  jogador = 0
-  self.board = criarBoard()
-  ganhador = verificaGanhador(self.board)
-
-  while(not ganhador):
-    printBoard(self.board)
-    print("=========================")
-
-    if(jogador == 0):
-      i, j = movimentoIA(self.board, jogador)
-      #i = getInputValido("Digite a linha: ")
-      #j = getInputValido("Digite a coluna: ")
-    
-    else:
-      i, j = movimentoIA(self.board, jogador)
-      #i = getInputValido("Digite a linha: ")
-      #j = getInputValido("Digite a coluna: ")
-      
-    
-    if(verificaMovimento(self.board, i, j)):
-      fazMovimento(self.board, i, j, jogador)
-      jogador = (jogador + 1) % 2
-
-    else:
-      print("A posicao informada ja esta ocupada")
-    
-    ganhador = verificaGanhador(self.board)
-
-  print("=========================")
-  printBoard(self.board)
-  print("Ganhador = ", ganhador)
-  print("=========================")
-  """

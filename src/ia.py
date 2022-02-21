@@ -1,6 +1,8 @@
 from tictactoe import TicTacToe as ttt
+
 branco = " "
 token = ["X", "O"]
+
 
 def getPosicoes(board):
   posicoes = []
@@ -10,6 +12,7 @@ def getPosicoes(board):
         posicoes.append([i, j])
   
   return posicoes
+
 
 def movimentoIA(board, jogador):
   possibilidades = getPosicoes(board)
@@ -37,11 +40,13 @@ def movimentoIA(board, jogador):
 
   return melhor_movimento[0], melhor_movimento[1]
 
+
 score = {
     "DRAW": 0,
     "X": 1,
     "O": -1
 }
+
 
 def minimax(board, jogador, profundidade = 1):
   boardd = ttt()
