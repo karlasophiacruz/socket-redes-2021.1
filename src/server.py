@@ -87,7 +87,7 @@ def game_pvp_t(conn, addr):
                     players[1].send(data.encode('utf-8'))
                 else:
                     players[0].send(data.encode('utf-8'))
-        
+
         except:
             erro = 1
             break
@@ -99,7 +99,7 @@ def game_pvp_t(conn, addr):
             players[-1].send(erro.encode('utf-8'))
         print("Me: " + players_name[0] + " is offline.")
         del players[0], players_name[0]
-    
+
     else:
         erro = "err"
         players[0].send(erro.encode('utf-8'))
@@ -123,7 +123,7 @@ def game_ia_t(conn, addr):
 
     player_name = player_name.decode('utf-8')
     print('Me: Player ' + player_name +
-            ' is online! IA mode')
+          ' is online! IA mode')
 
     # Envia mensagem de 'bem-vindo'
     msg = "hello3"
@@ -132,7 +132,7 @@ def game_ia_t(conn, addr):
     # Envia os dados dos jogadores
     msg = "iamplayer1$me ;)"
     conn.send(msg.encode('utf-8'))
-    
+
     init = 0
     while not is_over:
         # Recebe a jogada do jogador
@@ -140,7 +140,7 @@ def game_ia_t(conn, addr):
             data = conn.recv(4096)
             if data:
                 break
-        
+
         data = data.decode('utf-8')
         # Realiza a jogada do jogador no tabuleiro da IA
         if data.startswith("$coord:"):
@@ -153,14 +153,14 @@ def game_ia_t(conn, addr):
 
             is_over = check_end_ia_game(board, player_name)
 
-             # Quando o jogador fizer a primeira jogada da partida, ...
+            # Quando o jogador fizer a primeira jogada da partida, ...
             if init == 0:
                 msgg = "begin"
                 # ... envia mensagem para o jogador entrar no loop
                 conn.send(msgg.encode('utf-8'))
                 init = 1
                 time.sleep(2)
-            
+
             # Se o jogo não acabou, a IA realiza sua jogada
             if not is_over:
                 tictactoe.clear()
@@ -168,21 +168,21 @@ def game_ia_t(conn, addr):
                     x, y = ia.movimentoIA(board.board, 1)
 
                     if ttt.verificaMovimento(board, x, y):
-                        print("Me: Opponent " + player_name + ". My turn:") 
+                        print("Me: Opponent " + player_name + ". My turn:")
                         ttt.fazMovimento(board, x, y, 1)
                         ttt.printBoard(board)
                         jogadaaa = "$coord:" + str(x) + str(y)
-                        
+
                         # Envia a jogada da IA para o jogador
                         conn.send(jogadaaa.encode('utf-8'))
                         break
-                    
+
                     else:
                         print("Me: Invalid move.")
 
                 is_over = check_end_ia_game(board, player_name)
         time.sleep(1)
-    
+
     # Remove o jogador após o fim da partida ou perda de conexão
     print("Me: " + player_name + " is offline.")
     players_ia -= 1
@@ -194,7 +194,7 @@ def start_server():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind((HOST, PORT))
         s.listen()
-        print("Me: I'm awake. Waiting foy players...")
+        print("Me: I'm awake. Waiting for players...")
 
         # Aceita novos jogadores:
         # --> no modo PvP, se o número de jogadores ativos for menor que 2
@@ -211,7 +211,7 @@ def start_server():
             game_mode = conn.recv(1024)
             if not game_mode:
                 break
-            
+
             game_mode = int(game_mode.decode('utf-8'))
 
             # Modo PvP
@@ -227,11 +227,12 @@ def start_server():
                     msg = "full"
                     # Envia mensagem ao jogador de que já existe um jogo em andamento
                     conn.sendall(msg.encode('utf-8'))
-            
+
             # Modo IA
             else:
                 players_ia += 1
-                print("Me: Number of all players: " + str(len(players) + players_ia))
+                print("Me: Number of all players: " +
+                      str(len(players) + players_ia))
 
                 # Inicia a thread do jogo Player vs IA
                 threading._start_new_thread(game_ia_t, (conn, addr))
