@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" />
+  <img src= logo.png />
 </p>
 
 <h3 align="center">UNIVERSIDADE FEDERAL DE ALAGOAS - UFAL <br /> INSTITUTO DE COMPUTAÇÃO - IC <br /> Engenharia de Computação</h3 >
