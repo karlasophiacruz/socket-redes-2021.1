@@ -4,9 +4,9 @@
 
 <h3 align="center">UNIVERSIDADE FEDERAL DE ALAGOAS - UFAL <br /> INSTITUTO DE COMPUTAÇÃO - IC <br /> Engenharia de Computação</h3 >
 
-<h2 align= "center"> Tic Tac Toe </h3>
-
 ---
+
+<h2 align= "center"> Tic Tac Toe </h3>
 
 Repositório relacionado ao projeto do Socket da matéria de Redes de Computadores, ministrada pelo prof. Leandro Salles na UFAL em 2021.1.
 
@@ -40,7 +40,8 @@ $ py server.py
 ```
 
 > É de extrema importância que o servidor seja executado previamente ao cliente.
-> Em seguida, para executar o cliente:
+
+Em seguida, para executar o cliente, abra um novo terminal e rode os comandos:
 
 ```bash
 $ cd src
@@ -51,7 +52,7 @@ $ py client.py
 
 > Para encerrar um servidor ou cliente, basta digitar os comandos `Ctrl + C` em seu terminal ou simplesmente fechá-lo.
 
-> O código foi estruturado de maneira interativa do servidor com o lado do cliente, imprimindo mensagens intuitivas que permitem a condução do jogo, como para saber o nome do jogador, seu modo de jogo escolhido, mensagens informando o resultado, etc.
+O código foi estruturado de maneira interativa do servidor com o lado do cliente, imprimindo mensagens intuitivas que permitem a condução do jogo, como para saber o nome do jogador, seu modo de jogo escolhido, mensagens informando o resultado, etc.
 
 ---
 
