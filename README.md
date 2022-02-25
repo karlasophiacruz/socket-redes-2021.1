@@ -50,7 +50,7 @@ $ cd src
 $ py client.py
 ```
 
-> Caso deseje testar com um novo cliente - fator necessário para o modo de jogo "_Player vs Player_" abra um terceiro terminal e rode os comandos citados novamente.
+> Caso deseje testar com um novo cliente - fator necessário para o modo de jogo "_Player vs Player_" - abra um terceiro terminal e rode os comandos citados novamente.
 
 > Para encerrar um cliente, basta digitar os comandos `Ctrl + C` em seu terminal ou simplesmente fechá-lo.
 
